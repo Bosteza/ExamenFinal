@@ -1,0 +1,189 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+
+void swap(int* a, int* b) {
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+
+void bubbleSort(int arr[], int n) {
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = 0; j < n - i - 1; j++) {
+            if (arr[j] > arr[j + 1]) {
+                swap(&arr[j], &arr[j + 1]);
+            }
+        }
+    }
+}
+
+
+void quicksort(int lista[], int primero, int ultimo) {
+    int pivot, i, j, temp;
+    if (primero < ultimo) {
+        pivot = primero;
+        i = primero;
+        j = ultimo;
+        while (i < j) {
+            while (lista[i] <= lista[pivot] && i <= ultimo) {
+                i++;
+            }
+            while (lista[j] > lista[pivot] && j >= primero) {
+                j--;
+            }
+            if (i < j) {
+                temp = lista[i];
+                lista[i] = lista[j];
+                lista[j] = temp;
+            }
+        }
+        temp = lista[j];
+        lista[j] = lista[pivot];
+        lista[pivot] = temp;
+        quicksort(lista, primero, j - 1);
+        quicksort(lista, j + 1, ultimo);
+    }
+}
+
+
+void insertionSort(int arr[], int n) {
+    int i, key, j;
+    for (i = 1; i < n; i++) {
+        key = arr[i];
+        j = i - 1;
+
+        while (j >= 0 && arr[j] > key) {
+            arr[j + 1] = arr[j];
+            j = j - 1;
+        }
+        arr[j + 1] = key;
+    }
+}
+
+int main() {
+    const int tamano_arreglo = 10000;
+    const int ejecuciones = 100;
+
+    
+    int arreglo[tamano_arreglo];
+    srand(time(NULL));
+    for (int i = 0; i < tamano_arreglo; i++) {
+        arreglo[i] = rand();
+    }
+
+   
+    clock_t tiempos_quick[ejecuciones];
+    for (int i = 0; i < ejecuciones; i++) {
+        int copia_arreglo[tamano_arreglo];
+        for (int j = 0; j < tamano_arreglo; j++) {
+            copia_arreglo[j] = arreglo[j];
+        }
+
+        clock_t tic_quick = clock();
+        quicksort(copia_arreglo, 0, tamano_arreglo - 1);
+        clock_t toc_quick = clock();
+        tiempos_quick[i] = toc_quick - tic_quick;
+    }
+
+    
+    double tiempo_promedio_quick = 0.0;
+    double tiempo_minimo_quick = tiempos_quick[0];
+    double tiempo_maximo_quick = tiempos_quick[0];
+    for (int i = 0; i < ejecuciones; i++) {
+        tiempo_promedio_quick += tiempos_quick[i];
+
+        if (tiempos_quick[i] < tiempo_minimo_quick) {
+            tiempo_minimo_quick = tiempos_quick[i];
+        }
+
+        if (tiempos_quick[i] > tiempo_maximo_quick) {
+            tiempo_maximo_quick = tiempos_quick[i];
+        }
+    }
+    tiempo_promedio_quick /= ejecuciones;
+
+    
+    printf("Quick Sort:\n");
+    printf("Tiempo promedio: %f milisegundos\n", (double)tiempo_promedio_quick);
+    printf("Tiempo min: %f milisegundos\n", (double)tiempo_minimo_quick);
+    printf("Tiempo max: %f milisegundos\n", (double)tiempo_maximo_quick);
+
+    
+    clock_t tiempos_insertion[ejecuciones];
+    for (int i = 0; i < ejecuciones; i++) {
+        int copia_arreglo[tamano_arreglo];
+        for (int j = 0; j < tamano_arreglo; j++) {
+            copia_arreglo[j] = arreglo[j];
+        }
+
+        clock_t tic_insertion = clock();
+        insertionSort(copia_arreglo, tamano_arreglo);
+        clock_t toc_insertion = clock();
+        tiempos_insertion[i] = toc_insertion - tic_insertion;
+    }
+
+    
+    double tiempo_promedio_insertion = 0.0;
+    double tiempo_minimo_insertion = tiempos_insertion[0];
+    double tiempo_maximo_insertion = tiempos_insertion[0];
+    for (int i = 0; i < ejecuciones; i++) {
+        tiempo_promedio_insertion += tiempos_insertion[i];
+
+        if (tiempos_insertion[i] < tiempo_minimo_insertion) {
+            tiempo_minimo_insertion = tiempos_insertion[i];
+        }
+
+        if (tiempos_insertion[i] > tiempo_maximo_insertion) {
+            tiempo_maximo_insertion = tiempos_insertion[i];
+        }
+    }
+    tiempo_promedio_insertion /= ejecuciones;
+
+    
+    printf("\nInsertion Sort:\n");
+    printf("Tiempo promedio: %f milisegundos\n", (double)tiempo_promedio_insertion);
+    printf("Tiempo min: %f milisegundos\n", (double)tiempo_minimo_insertion);
+    printf("Tiempo max: %f milisegundos\n", (double)tiempo_maximo_insertion);
+
+    
+    clock_t tiempos_bubble[ejecuciones];
+    for (int i = 0; i < ejecuciones; i++) {
+        int copia_arreglo[tamano_arreglo];
+        for (int j = 0; j < tamano_arreglo; j++) {
+            copia_arreglo[j] = arreglo[j];
+        }
+
+        clock_t tic_bubble = clock();
+        bubbleSort(copia_arreglo, tamano_arreglo);
+        clock_t toc_bubble = clock();
+        tiempos_bubble[i] = toc_bubble - tic_bubble;
+    }
+
+    
+    double tiempo_promedio_bubble = 0.0;
+    double tiempo_minimo_bubble = tiempos_bubble[0];
+    double tiempo_maximo_bubble = tiempos_bubble[0];
+    for (int i = 0; i < ejecuciones; i++) {
+        tiempo_promedio_bubble += tiempos_bubble[i];
+
+        if (tiempos_bubble[i] < tiempo_minimo_bubble) {
+            tiempo_minimo_bubble = tiempos_bubble[i];
+        }
+
+        if (tiempos_bubble[i] > tiempo_maximo_bubble) {
+            tiempo_maximo_bubble = tiempos_bubble[i];
+        }
+    }
+    tiempo_promedio_bubble /= ejecuciones;
+
+   
+    printf("\nBubble Sort:\n");
+    printf("Tiempo promedio: %f milisegundos\n", (double)tiempo_promedio_bubble);
+    printf("Tiempo min: %f milisegundos\n", (double)tiempo_minimo_bubble);
+    printf("Tiempo max: %f milisegundos\n", (double)tiempo_maximo_bubble);
+
+    return 0;
+}
