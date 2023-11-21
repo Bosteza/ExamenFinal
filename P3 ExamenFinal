@@ -1,0 +1,117 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+
+int busquedaSecuencial(int arr[], int n, int ele) {
+    for (int i = 0; i < n; i++) {
+        if (arr[i] == ele) {
+            return i;
+        }
+    }
+    return -1; 
+}
+
+
+int busquedaBinaria(int arr[], int n, int ele) {
+    int primero = 0, ultimo = n - 1, mitad;
+
+    while (primero <= ultimo) {
+        mitad = (primero + ultimo) / 2;
+
+        if (arr[mitad] == ele) {
+            return mitad; 
+        } else if (arr[mitad] < ele) {
+            primero = mitad + 1;
+        } else {
+            ultimo = mitad - 1;
+        }
+    }
+
+    return -1; 
+}
+
+int main() {
+	
+    const int tamano_arreglo = 50000;
+    const int ejecuciones = 100;
+
+    
+    int arreglo[tamano_arreglo];
+    for (int i = 0; i < tamano_arreglo; i++) {
+        arreglo[i] = i;
+    }
+
+    
+    clock_t tiempos_secuencial[ejecuciones];
+    clock_t tiempos_binaria[ejecuciones];
+
+    srand(time(NULL));
+
+    for (int i = 0; i < ejecuciones; i++) {
+        int elemento = rand() % tamano_arreglo;
+
+
+       
+        clock_t tic_secuencial = clock();
+        int pos_secuencial = busquedaSecuencial(arreglo, tamano_arreglo, elemento);
+        clock_t toc_secuencial = clock();
+        tiempos_secuencial[i] = toc_secuencial - tic_secuencial;
+
+        
+        clock_t tic_binaria = clock();
+        int pos_binaria = busquedaBinaria(arreglo, tamano_arreglo, elemento);
+        clock_t toc_binaria = clock();
+        tiempos_binaria[i] = toc_binaria - tic_binaria;
+       
+    }
+
+    
+    double tiempo_promedio_secuencial = 0.0;
+    double tiempo_minimo_secuencial = tiempos_secuencial[0];
+    double tiempo_maximo_secuencial = tiempos_secuencial[0];
+
+    for (int i = 0; i < ejecuciones; i++) {
+        tiempo_promedio_secuencial += tiempos_secuencial[i];
+
+        if (tiempos_secuencial[i] < tiempo_minimo_secuencial) {
+            tiempo_minimo_secuencial = tiempos_secuencial[i];
+        }
+
+        if (tiempos_secuencial[i] > tiempo_maximo_secuencial) {
+            tiempo_maximo_secuencial = tiempos_secuencial[i];
+        }
+    }
+    tiempo_promedio_secuencial /= ejecuciones;
+
+    
+    double tiempo_promedio_binaria = 0.0;
+    double tiempo_minimo_binaria = tiempos_binaria[0];
+    double tiempo_maximo_binaria = tiempos_binaria[0];
+
+    for (int i = 0; i < ejecuciones; i++) {
+        tiempo_promedio_binaria += tiempos_binaria[i];
+
+        if (tiempos_binaria[i] < tiempo_minimo_binaria) {
+            tiempo_minimo_binaria = tiempos_binaria[i];
+        }
+
+        if (tiempos_binaria[i] > tiempo_maximo_binaria) {
+            tiempo_maximo_binaria = tiempos_binaria[i];
+        }
+    }
+    tiempo_promedio_binaria /= ejecuciones;
+
+    
+    printf("Secuencial:\n");
+    printf("Tiempo promedio: %f milisegundos\n", tiempo_promedio_secuencial);
+    printf("Tiempo min: %f milisegundos\n", tiempo_minimo_secuencial);
+    printf("Tiempo max: %f milisegundos\n", tiempo_maximo_secuencial);
+
+    printf("\nBinaria:\n");
+    printf("Tiempo promedio: %f milisegundos\n", tiempo_promedio_binaria);
+    printf("Tiempo min: %f milisegundos\n", tiempo_minimo_binaria);
+    printf("Tiempo max: %f milisegundos\n", tiempo_maximo_binaria);
+
+    return 0;
+}
